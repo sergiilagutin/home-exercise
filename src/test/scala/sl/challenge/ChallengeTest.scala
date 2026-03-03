@@ -20,7 +20,7 @@ trait ChallengeTest extends Specification with CatsEffect {
 
   "Solution" >> {
     s"calculate min path for ${testParameters.label}" >> {
-      val minPath = Result(List.fill(testParameters.lineCount)(1))
+      val minPath = Result(List.fill(testParameters.lineCount)(1), testParameters.lineCount)
       new TriangleFileReader[IO](testParameters.filename)
         .read()
         .use(_.getTriangle)
@@ -29,7 +29,7 @@ trait ChallengeTest extends Specification with CatsEffect {
     }
 
     s"calculate max path for ${testParameters.label}" >> {
-      val maxPath = Result((1 to testParameters.lineCount).toList)
+      val maxPath = Result((1 to testParameters.lineCount).toList, (1 to testParameters.lineCount).sum)
       new TriangleFileReader[IO](testParameters.filename)
         .read()
         .use(_.getTriangle)
