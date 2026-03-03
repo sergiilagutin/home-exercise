@@ -1,7 +1,7 @@
 package sl.challenge
 
 import sl.challenge.model.Result
-import sl.challenge.model.Types.{Path, Triangle}
+import sl.challenge.model.Types.Triangle
 
 object Solver {
   private type Ordering = (BigInt, BigInt) => Boolean
