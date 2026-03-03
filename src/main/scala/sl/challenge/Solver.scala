@@ -4,7 +4,7 @@ import sl.challenge.model.Result
 import sl.challenge.model.Types.{Path, Triangle}
 
 object Solver {
-  private type Ordering = (Int, Int) => Boolean
+  private type Ordering = (BigInt, BigInt) => Boolean
 
   private def MIN: Ordering = _ < _
 

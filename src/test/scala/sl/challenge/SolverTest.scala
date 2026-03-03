@@ -28,5 +28,11 @@ class SolverTest extends Specification {
     "find max path" in new SmallTriangle {
       Solver.maxPath(triangle) must beEqualTo(maxPath)
     }
+
+    "consider big numbers" >>  {
+      val rowCount = 5
+      val triangle = (1 to rowCount).map(Array.fill(_)(Int.MaxValue)).toArray
+      Solver.maxPath(triangle) must beEqualTo(Result(List.fill(rowCount)(Int.MaxValue), BigInt(Int.MaxValue) * rowCount))
+    }
   }
 }
