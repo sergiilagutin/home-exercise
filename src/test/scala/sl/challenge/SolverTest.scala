@@ -10,7 +10,7 @@ class SolverTest extends Specification {
       Array(1),
       Array(2, 3),
       Array(4, 5, 6),
-      Array(7, 8, 9, 10),
+      Array(7, 8, 9, 10)
     )
 
     val minPath = Result(List(1, 2, 4, 7))
