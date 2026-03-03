@@ -8,31 +8,31 @@ import scala.annotation.tailrec
 import scala.io.{Source, StdIn}
 import scala.util.Try
 
-trait TriangleReader[F[_]] {
-  def read(): Resource[F, SourceReader[F]]
+trait ResourceProvider[F[_]] {
+  def getResource: Resource[F, TriangleReader[F]]
 }
 
-class SourceReader[F[_]: Sync](input: Source) {
+class TriangleReader[F[_]: Sync](input: Source) {
   def getTriangle: F[Option[Triangle]] =
     Sync[F].delay(input.getLines()).map(lines => Try(lines.toArray.map(line => line.split(" ").map(_.toInt))).toOption)
 }
 
-class TriangleStringReader[F[_]: Sync](str: String) extends TriangleReader[F] {
+class StringResourceProvider[F[_]: Sync](str: String) extends ResourceProvider[F] {
 
-  override def read(): Resource[F, SourceReader[F]] =
-    Resource.pure(Source.fromString(str)).map(new SourceReader[F](_))
+  override def getResource: Resource[F, TriangleReader[F]] =
+    Resource.pure(Source.fromString(str)).map(new TriangleReader[F](_))
 }
 
-class TriangleFileReader[F[_]: Sync](filename: String) extends TriangleReader[F] {
-  override def read(): Resource[F, SourceReader[F]] =
+class FileResourceProvider[F[_]: Sync](filename: String) extends ResourceProvider[F] {
+  override def getResource: Resource[F, TriangleReader[F]] =
     Resource
       .make(Sync[F].delay(Source.fromFile(filename)))(file => Sync[F].delay(file.close()))
-      .map(new SourceReader(_))
+      .map(new TriangleReader(_))
 }
 
-class TriangleStdInReader[F[_]: Sync] extends TriangleReader[F] {
+class StdInResourceProvider[F[_]: Sync] extends ResourceProvider[F] {
 
-  override def read(): Resource[F, SourceReader[F]] = {
+  override def getResource: Resource[F, TriangleReader[F]] = {
     @tailrec
     def readLines(acc: List[String]): List[String] =
       Option(StdIn.readLine()) match {
@@ -43,6 +43,6 @@ class TriangleStdInReader[F[_]: Sync] extends TriangleReader[F] {
     Resource
       .eval(Sync[F].delay(readLines(Nil).reverse.mkString("\n")))
       .map(Source.fromString)
-      .map(new SourceReader[F](_))
+      .map(new TriangleReader[F](_))
   }
 }

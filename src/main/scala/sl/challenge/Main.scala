@@ -9,10 +9,9 @@ import cats.implicits.toShow
 object Main extends IOApp {
 
   override def run(args: List[String]): effect.IO[ExitCode] =
-    readInput[IO](args)
-      .read()
-      .use { sourceReader =>
-        OptionT(sourceReader.getTriangle)
+    makeResourceProvider[IO](args).getResource
+      .use { triangleReader =>
+        OptionT(triangleReader.getTriangle)
           .filter(TriangleValidator.isValid)
           .map(Solver.minPath)
           .map(_.show)
@@ -22,9 +21,9 @@ object Main extends IOApp {
           .getOrElse(ExitCode.Error)
       }
 
-  private def readInput[F[_]: Sync](args: List[String]) =
+  private def makeResourceProvider[F[_]: Sync](args: List[String]) =
     if (args.isEmpty)
-      new TriangleStdInReader[F]
+      new StdInResourceProvider[F]
     else
-      new TriangleFileReader[F](args.head)
+      new FileResourceProvider[F](args.head)
 }

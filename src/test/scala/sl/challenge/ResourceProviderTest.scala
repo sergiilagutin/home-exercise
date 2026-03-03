@@ -4,7 +4,7 @@ import org.specs2.mutable.Specification
 import cats.effect.IO
 import cats.effect.testing.specs2.CatsEffect
 
-class TriangleReaderTest extends Specification with CatsEffect {
+class ResourceProviderTest extends Specification with CatsEffect {
   "TriangleReader" >> {
     "read from string" >> {
       val expected = Array(
@@ -18,8 +18,8 @@ class TriangleReaderTest extends Specification with CatsEffect {
         .map(_.mkString(" "))
         .mkString("\n")
 
-      val io = new TriangleStringReader[IO](string)
-        .read()
+      val io = new StringResourceProvider[IO](string)
+        .getResource
         .use(_.getTriangle)
 
       io.map(_ must beSome(expected))
@@ -33,8 +33,8 @@ class TriangleReaderTest extends Specification with CatsEffect {
         Array(7, 8, 9, 10)
       )
 
-      val io = new TriangleFileReader[IO]("./src/test/resources/data_tiny.txt")
-        .read()
+      val io = new FileResourceProvider[IO]("./src/test/resources/data_tiny.txt")
+        .getResource
         .use(_.getTriangle)
 
       io.map(_ must beSome(expected))
