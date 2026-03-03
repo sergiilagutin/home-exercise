@@ -18,14 +18,15 @@ object Solver {
 
   private def getResult(triangle: Triangle)(implicit ordering: Ordering): Result = {
     val lastRow = triangle.last.map(value => Result(List(value), value))
-    triangle.dropRight(1)
-      .foldRight(lastRow) {
-        case (currentRow, bottomRow) =>
-          val mergedNeighborhoods = mergeNeighborhoods(bottomRow)
-          mergedNeighborhoods.zip(currentRow).map { case (result, currentValue) =>
-            Result(currentValue :: result.path, currentValue + result.sum)
-          }
-      }.head
+    triangle
+      .dropRight(1)
+      .foldRight(lastRow) { case (currentRow, bottomRow) =>
+        val mergedNeighborhoods = mergeNeighborhoods(bottomRow)
+        mergedNeighborhoods.zip(currentRow).map { case (result, currentValue) =>
+          Result(currentValue :: result.path, currentValue + result.sum)
+        }
+      }
+      .head
   }
 
   private def mergeNeighborhoods(line: Array[Result])(implicit ordering: Ordering): Array[Result] =
